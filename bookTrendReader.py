@@ -58,7 +58,7 @@ class TrendReader(object):
 		"""
 		@summary: method to generate the predicted values in our linear regression
 		"""
-		for hourIndex in range(1, self.dataFile + 1):
+		for hourIndex in range(1, len(self.dataFile) + 1):
 			predictedValue = self.slope * hourIndex + self.intercept
 			self.predictedValues.append(predictedValue)
 
