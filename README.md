@@ -9,6 +9,7 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 ### Development
 #### javascript
 [Window Onload](https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onload)
+[Global Variable Across Files](http://stackoverflow.com/questions/3244361/can-i-access-variables-from-another-file)
 
 #### D3 Visualizations
 [D3 Intro](http://d3js.org/#introduction)

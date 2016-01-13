@@ -8,10 +8,7 @@
 
 /* http://www.cis.gvsu.edu/~wolffe/courses/cs678/projects/downloads.txt */
 
-
-
 function initialize() {
-    var dataset = [1, 2, 3];
     d3.select("body").selectAll("p")
         .data(dataset)
         .enter()
