@@ -6,4 +6,26 @@
  * @Version 1.0
  ****************************************************************************/
 
- var fileName = 'downloads.txt'
+/* http://www.cis.gvsu.edu/~wolffe/courses/cs678/projects/downloads.txt */
+
+
+
+function initialize() {
+    var dataset = [1, 2, 3];
+    d3.select("body").selectAll("p")
+        .data(dataset)
+        .enter()
+        .append("p")
+        .text(function(d) { return d; })
+        .style("color", function(d) {
+            if (d > 1) {
+                return "red";
+            } else {
+                return "black";
+            }
+    });
+};
+
+window.onload = function() {
+    initialize();
+};
