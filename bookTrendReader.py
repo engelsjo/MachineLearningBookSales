@@ -15,6 +15,7 @@ class TrendReader(object):
 		self.slope = 0
 		self.intercept = 0
 		self.predictedValues = []
+		self.arimaValues = []
 
 	def readDataFile(self):
 		"""
@@ -58,9 +59,21 @@ class TrendReader(object):
 		"""
 		@summary: method to generate the predicted values in our linear regression
 		"""
-		for hourIndex in range(1, len(self.dataFile) + 1):
+		for hourIndex in range(1, len(self.fileLines) + 1):
 			predictedValue = self.slope * hourIndex + self.intercept
 			self.predictedValues.append(predictedValue)
+
+	def generateArimaValues(self):
+		"""
+		@summary: method to generate the arima values from our data set
+		"""
+		# Adam will implement this
+		self.arimaValues = []
+
+	def getPredictedValues(self):
+		return self.predictedValues
+
+
 
 def main(argv):
 	"""
@@ -85,6 +98,12 @@ def main(argv):
 	reader.generateLinearRegression()
 	# gather predicted values based upon our linear regression
 	reader.generatePredictedValues()
+	#predictedValues = reader.getPredictedValues()
+	#with open("output.txt", "w") as f:
+	#	f.write("y = {}x + {}\n\n".format(reader.slope, reader.intercept))
+	#	for line in predictedValues:
+	#		f.write(str(line) + "\n")
+	
 
 
 def usage():
