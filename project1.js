@@ -6,8 +6,6 @@
  * @Version 1.0
  ****************************************************************************/
 
-/* http://www.cis.gvsu.edu/~wolffe/courses/cs678/projects/downloads.txt */
-
 function initialize() {
     d3.select("body").selectAll("p")
         .data(dataset)
