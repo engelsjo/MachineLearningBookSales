@@ -36,7 +36,7 @@ def generateArray(textFile, javascriptFile):
 
 def main():
     textFile = 'downloads.txt'
-    javascriptFile = 'datasetTest.js'
+    javascriptFile = 'dataset.js'
     generateArray(textFile, javascriptFile)
 
 if __name__ == '__main__':
