@@ -7,6 +7,7 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 ### Required
 - Plot linear trendline
 - Handle NaNs
+
 ### Extra
 - Import CSV using d3
 - Bar chart, binning by hours/days
