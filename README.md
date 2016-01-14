@@ -18,3 +18,4 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 [D3 Intro](http://d3js.org/#introduction)
 [D3 Fundamentals](http://alignedleft.com/tutorials/d3/fundamentals)
 [D3 Scatterplot Tutorial](https://www.oreilly.com/learning/making-a-scatterplot-with-d3-js)
+[D3 CSV Import](https://github.com/mbostock/d3/wiki/CSV)
