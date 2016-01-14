@@ -2,6 +2,7 @@
  style for d3
 */
 
+/* http://alignedleft.com/tutorials/d3/making-a-scatterplot */
 .axis path,
 .axis line {
 	fill: none;

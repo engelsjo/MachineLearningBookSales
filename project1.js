@@ -8,6 +8,8 @@
 
 function init() {
 
+    /* http://alignedleft.com/tutorials/d3/making-a-scatterplot */
+
     // width and height
     var w = 300;
     var h = 300;
