@@ -1,0 +1,21 @@
+/* ***************************************************************************
+ * @Title Machine Learning Project # 1
+ * @Description: program to analyze data from book sales, and make predictions
+ * @Authors: Michael Baldwin, Josh Engelsma, Adam Terwilliger
+ * @Date: January 13, 2016
+ * @Version 1.0
+ ****************************************************************************/
+
+/* http://alignedleft.com/tutorials/d3/making-a-scatterplot */
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
+}
