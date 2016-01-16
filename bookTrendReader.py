@@ -6,6 +6,7 @@ Python backend for Machine Learning project 1
 
 import sys
 import os
+import numpy as np
 
 class TrendReader(object):
 
@@ -14,8 +15,8 @@ class TrendReader(object):
 		self.fileLines = []
 		self.slope = 0
 		self.intercept = 0
-		self.predictedValues = []
-		self.arimaValues = []
+		self.predictedLinearValues = []
+		self.predictedCubicValues = []
 
 	def readDataFile(self):
 		"""
@@ -42,8 +43,8 @@ class TrendReader(object):
 			sumXvalues += hour
 			sumYvalues += downloads
 			sumXYpairs += (hour * downloads)
-			sumXsquared += (hour * hour)
-			sumYsquared += (downloads * downloads)
+			sumXsquared += pow(hour, 2)
+			sumYsquared += pow(downloads, 2)
 		nbrOfValues = len(self.fileLines) - nbrOfNans
 		# calculate the slope
 		slope = (1.0 * ((nbrOfValues * sumXYpairs) - (sumXvalues * sumYvalues))) / (1.0 * ((nbrOfValues * sumXsquared) - (sumXsquared)))
@@ -53,25 +54,57 @@ class TrendReader(object):
 		# assign to the instance
 		self.slope = slope
 		self.intercept = intercept
-		print("\ny = {}x + {}\n".format(slope, intercept))
+		print("\nLinear Regression:\ny = {}x + {}\n".format(slope, intercept))
 
-	def generatePredictedValues(self):
+	def generateCubicRegression(self):
+		"""
+		@summary: method to generate a cubic regression from our data
+		"""
+		sumX6Values = sumX5Values = sumX4Values = sumX3Values = sumX2Values = sumX1Values = sumX2Y1Values = sumX3Y1Values = sumX1Y1Values = sumY1Values = nbrOfNans = 0
+		for hour, downloads in enumerate(self.fileLines):
+			if downloads == "nan":
+				nbrOfNans += 1
+				continue
+			sumX1Values += hour
+			sumX2Values += pow(hour, 2)
+			sumX3Values += pow(hour, 3)
+			sumX4Values += pow(hour, 4)
+			sumX5Values += pow(hour, 5)
+			sumX6Values += pow(hour, 6)
+			sumX3Y1Values += pow(hour, 3) * downloads
+			sumX2Y1Values += pow(hour, 2) * downloads
+			sumX1Y1Values += hour * downloads
+			sumY1Values += downloads
+		nbrOfValues = len(self.fileLines) - nbrOfNans
+
+		# build matrices to calculate the 4 coefficients
+		coeffMatrix = [
+						[sumX6Values, sumX5Values, sumX4Values, sumX3Values],
+						[sumX5Values, sumX4Values, sumX3Values, sumX2Values],
+						[sumX4Values, sumX3Values, sumX2Values, sumX1Values],
+						[sumX3Values, sumX2Values, sumX1Values, nbrOfValues]
+					  ]
+		answeMatrix = [
+						[sumX3Y1Values],
+						[sumX2Y1Values],
+						[sumX1Y1Values],
+						[sumY1Values]
+					  ]
+
+		resultsMatrix = np.linalg.solve(np.array(coeffMatrix), np.array(answeMatrix))
+		print("\nCubic Regression:\ny = {}x^3 + {}x^2 + {}x + {}\n".format(resultsMatrix[0][0], resultsMatrix[1][0], resultsMatrix[2][0], resultsMatrix[3][0]))
+
+
+	def generateLinearPredictedValues(self):
 		"""
 		@summary: method to generate the predicted values in our linear regression
 		"""
 		for hourIndex in range(1, len(self.fileLines) + 1):
 			predictedValue = self.slope * hourIndex + self.intercept
-			self.predictedValues.append(predictedValue)
+			self.predictedLinearValues.append(predictedValue)
 
-	def generateArimaValues(self):
-		"""
-		@summary: method to generate the arima values from our data set
-		"""
-		# Adam will implement this
-		self.arimaValues = []
-
-	def getPredictedValues(self):
-		return self.predictedValues
+	def getLinearPredictedValues(self):
+		return self.predictedLinearValues
 
 
 
@@ -96,13 +129,8 @@ def main(argv):
 	reader.readDataFile()
 	# create a linear regression from our data
 	reader.generateLinearRegression()
-	# gather predicted values based upon our linear regression
-	reader.generatePredictedValues()
-	#predictedValues = reader.getPredictedValues()
-	#with open("output.txt", "w") as f:
-	#	f.write("y = {}x + {}\n\n".format(reader.slope, reader.intercept))
-	#	for line in predictedValues:
-	#		f.write(str(line) + "\n")
+	# create a cubic regression from our data
+	reader.generateCubicRegression()
 	
 
 
