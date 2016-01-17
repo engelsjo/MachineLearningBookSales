@@ -14,6 +14,7 @@ class TrendReader(object):
 		self.dataFile = dataFile
 		self.fileLines = []
 		self.nbrOfNans = 0
+		self.nanIndices = []
 		self.linearCoefficients = {}
 		self.cubicCoefficients = {}
 		self.predictedLinearValues = []
@@ -26,7 +27,7 @@ class TrendReader(object):
 		@summary: read in lines from downloads.txt into self.dataFile
 		"""
 		with open(self.dataFile) as fh:
-			for line in fh:
+			for i, line in enumerate(fh):
 				line = line.strip()
 				lineParts = line.split(',')
 				downloads = lineParts[1]
@@ -34,12 +35,14 @@ class TrendReader(object):
 					downloads = int(downloads)
 				else:
 					self.nbrOfNans += 1
+					self.nanIndices.append(i)
 				self.fileLines.append(downloads)
 
 	def generatePolynomialRegression(self, degree, data):
 		"""
 		@param degree: the integer degree
 		@param data: a list of file lines where each line is a comma separated x y coord
+		@return: a list of coefficients
 		Method that returns the coefficients of the n degree polynomial 
 		"""
 		xSummations = [0] * degree * 2
@@ -93,19 +96,57 @@ class TrendReader(object):
 		"""
 		@summary: method to generate the predicted values in our linear regression
 		"""
+		self.predictedLinearValues = []
+		degree = 1
+		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
 		for hourIndex in range(1, len(self.fileLines) + 1):
-			predictedValue = self.slope * hourIndex + self.intercept
+			predictedValue = coefficients[0] * hourIndex + coefficients[1]
 			self.predictedLinearValues.append(predictedValue)
 
 	def generateCubicPredictedValues(self):
 		"""
 		@summary: method to generate the predicted values in our cubic regression model
 		"""
+		self.predictedCubicValues = []
+		degree = 3
+		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
 		for hourIndex in range(1, len(self.fileLines) + 1):
-			predictedValue = 0
+			predictedValue = coefficients[0] * pow(hourIndex, 3) + coefficients[1] * pow(hourIndex, 2) + coefficients[2] * pow(hourIndex, 1) + coefficients[3]
+			self.predictedCubicValues.append(predictedValue)
+
+	def generateAvgPredictedValues(self):
+		"""
+		@summary: method to generate an average of the cubic and linear function
+		"""
+		self.cubicAndLinearAvgValues = []
+		self.generateLinearPredictedValues()
+		self.generateCubicPredictedValues()
+		for x in range(len(self.predictedLinearValues)):
+			linearVal = self.predictedLinearValues[x]
+			cubicVal = self.predictedCubicValues[x]
+			avgVal = (linearVal + cubicVal) / 2.0
+			self.cubicAndLinearAvgValues.append(avgVal)
+
+	def generateNanPredictedValues(self):
+		"""
+		@summary: method to generate the predicted values of the nan points
+		"""
+		self.nanPredictedValues = {}
+		self.generateAvgPredictedValues()
+		for nanXValue in self.nanIndices:
+			self.nanPredictedValues[nanXValue + 1] = self.cubicAndLinearAvgValues[nanXValue]
 
 	def getLinearPredictedValues(self):
 		return self.predictedLinearValues
+
+	def getCubicPredictedValues(self):
+		return self.predictedCubicValues
+
+	def getAvgPredictedValues(self):
+		return self.cubicAndLinearAvgValues
+
+	def getNanPredictedValues(self):
+		return self.nanPredictedValues
 
 def main(argv):
 	"""
@@ -126,11 +167,13 @@ def main(argv):
 	reader = TrendReader(argv[1])
 	# read in our data
 	reader.readDataFile()
-	# create a linear regression from our data
+	# create a linear regression from our data - prints out the equation
 	reader.generateLinearRegression()
-	# create a cubic regression from our data
+	# create a cubic regression from our data - prints out the equation
 	reader.generateCubicRegression()
-	
+	# get the points for our nan coords
+	reader.generateNanPredictedValues()
+	# print(reader.nanPredictedValues)
 
 
 def usage():
