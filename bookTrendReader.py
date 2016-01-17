@@ -36,64 +36,58 @@ class TrendReader(object):
 					self.nbrOfNans += 1
 				self.fileLines.append(downloads)
 
+	def generatePolynomialRegression(self, degree, data):
+		"""
+		@param degree: the integer degree
+		@param data: a list of file lines where each line is a comma separated x y coord
+		Method that returns the coefficients of the n degree polynomial 
+		"""
+		xSummations = [0] * degree * 2
+		xySummations = [0] * (degree + 1)
+		nbrOfNans = 0
+		for hour, downloads in enumerate(data):
+			if downloads == "nan": 
+				nbrOfNans += 1
+				continue
+			for exponent in range(1, len(xSummations) + 1): xSummations[exponent - 1] += pow(hour, exponent)
+			for exponent in range(degree + 1): xySummations[exponent] += pow(hour, exponent) * downloads
+		nbrOfValues = len(data) - nbrOfNans
+
+		# build coefficent matrix
+		coeffMatrix = []
+		for row in range(degree + 1):
+			matrixRow = []
+			for col in range(degree + 1):
+				if row == degree and col == degree: matrixRow.append(nbrOfValues)
+				else: matrixRow.append(xSummations[len(xSummations) - 1 - row - col])
+			coeffMatrix.append(matrixRow)
+
+		# build the answers matrix
+		answeMatrix = []
+		for row in range(degree + 1):
+			rowMatrix = [xySummations[len(xySummations) - 1 - row]]
+			answeMatrix.append(rowMatrix)
+
+		# use numpy to solve the matrix equation, and store off our data
+		resultsMatrix = np.linalg.solve(np.array(coeffMatrix), np.array(answeMatrix))
+		finalRetVal = [resultsMatrix[i][0] for i in range(degree + 1)]
+		return finalRetVal
+
 	def generateLinearRegression(self):
 		"""
 		@summary: method to generate a linear regression from our data
 		"""
-		sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = 0
-		for hour, downloads in enumerate(self.fileLines):
-			if downloads == "nan": continue
-			sumXvalues += hour
-			sumYvalues += downloads
-			sumXYpairs += (hour * downloads)
-			sumXsquared += pow(hour, 2)
-			sumYsquared += pow(downloads, 2)
-		nbrOfValues = len(self.fileLines) - self.nbrOfNans
-		# calculate the slope
-		slope = (1.0 * ((nbrOfValues * sumXYpairs) - (sumXvalues * sumYvalues))) / (1.0 * ((nbrOfValues * sumXsquared) - (sumXsquared)))
-		# calculate the y intercept
-		intercept = (1.0 * (sumYvalues - (slope * sumXvalues))) / (1.0 * nbrOfValues)
-
-		# assign to the instance
-		self.linearCoefficients["slope"] = slope
-		self.linearCoefficients["intercept"] = intercept
-		print("\nLinear Regression:\ny = {}x + {}\n".format(slope, intercept))
+		degree = 1
+		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
+		print("\nLinear Regression:\ny = {}x + {}\n".format(coefficients[0], coefficients[1]))
 
 	def generateCubicRegression(self):
 		"""
 		@summary: method to generate a cubic regression from our data
 		"""
-		xSummations = [0, 0, 0, 0, 0, 0]
-		xySummations = [0, 0, 0, 0]
-
-		for hour, downloads in enumerate(self.fileLines):
-			if downloads == "nan": continue
-			for exponent in range(1, 7): xSummations[exponent - 1] += pow(hour, exponent)
-			for exponent in range(0, 4): xySummations[exponent] += pow(hour, exponent) * downloads	
-		nbrOfValues = len(self.fileLines) - self.nbrOfNans
-
-		# build coefficient matrix
-		coeffMatrix = []
-		for row in range(4):
-			matrixRow = []
-			for col in range(4):
-				if row == 3 and col == 3: matrixRow.append(nbrOfValues)
-				else: matrixRow.append(xSummations[5 - row - col])
-			coeffMatrix.append(matrixRow)
-
-		# build the answers matrix
-		answeMatrix = []
-		for row in range(4):
-			rowMatrix = [xySummations[3 - row]]
-			answeMatrix.append(rowMatrix)
-
-		# use numpy to solve the matrix equation, and store off our data
-		resultsMatrix = np.linalg.solve(np.array(coeffMatrix), np.array(answeMatrix))
-		keys = ["cubicCoeff", "squaredCoeff", "xCoeff", "intercept"]
-		for i in range(4):
-			self.cubicCoefficients[keys[i]] = resultsMatrix[i][0]
-		print("\nCubic Regression:\ny = {}x^3 + {}x^2 + {}x + {}\n".format(resultsMatrix[0][0], resultsMatrix[1][0], resultsMatrix[2][0], resultsMatrix[3][0]))
-
+		degree = 3
+		cubicCoefficients = self.generatePolynomialRegression(degree, self.fileLines)
+		print("\nCubic Regression:\ny = {}x^3 + {}x^2 + {}x + {}\n".format(cubicCoefficients[0], cubicCoefficients[1], cubicCoefficients[2], cubicCoefficients[3]))
 
 	def generateLinearPredictedValues(self):
 		"""
@@ -112,8 +106,6 @@ class TrendReader(object):
 
 	def getLinearPredictedValues(self):
 		return self.predictedLinearValues
-
-
 
 def main(argv):
 	"""
