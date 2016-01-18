@@ -84,6 +84,14 @@ class TrendReader(object):
 		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
 		print("\nLinear Regression:\ny = {}x + {}\n".format(coefficients[0], coefficients[1]))
 
+	def generateQuadraticRegression(self):
+		"""
+		@summary: method to generate a linear regression from our data
+		"""
+		degree = 2
+		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
+		print("\nQuadratic Regression:\ny = {}x^2 + {}x + {}\n".format(coefficients[0], coefficients[1], coefficients[2]))
+
 	def generateCubicRegression(self):
 		"""
 		@summary: method to generate a cubic regression from our data
@@ -171,6 +179,8 @@ def main(argv):
 	reader.generateLinearRegression()
 	# create a cubic regression from our data - prints out the equation
 	reader.generateCubicRegression()
+	# create a quad regresssion
+	reader.generateQuadraticRegression()
 	# get the points for our nan coords
 	reader.generateNanPredictedValues()
 	# print(reader.nanPredictedValues)
