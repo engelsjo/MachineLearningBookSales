@@ -8,8 +8,7 @@
 
 /* http://alignedleft.com/tutorials/d3/making-a-scatterplot */
 
-.axis path,
-.axis line {
+.axis path, line {
 	fill: none;
 	stroke: black;
 	shape-rendering: crispEdges;
@@ -22,5 +21,12 @@
 
 .trendLine {
 	stroke: red;
+	stroke-width: 1;
+}
+
+/*
+.trendLine {
+	stroke: red;
 	stroke-width:
 }
+*/
