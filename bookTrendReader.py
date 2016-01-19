@@ -43,10 +43,7 @@ class TrendReader(object):
 					self.nanIndices.append(i)
 				self.fileLines.append(downloads)
 
-    def generateSimpleLinearRegression(self):
-		"""
-		@summary: method to generate a linear regression from our data
-		"""
+	def generateSimpleLinearRegression(self):
 		sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = nbrOfNans = 0
 		for hour, downloads in enumerate(self.fileLines):
 			if downloads == "nan":
@@ -154,17 +151,16 @@ class TrendReader(object):
 
 	def generateQuadraticPredictedValues(self):
 		"""
-		@summary: method to generate the predicted values in our
-                quadratic regression
+		@summary: method to generate the predicted values in our quadratic regression
 		"""
 		self.predictedQuadraticValues = []
 		degree = 2
 		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
 		for hourIndex in range(1, len(self.fileLines) + 1):
 		    predictedValue = coefficients[0] * pow(hourIndex, 2) + coefficients[1] * hourIndex + coefficients[2]
-            self.predictedQuadraticValues.append(predictedValue)
+		    self.predictedQuadraticValues.append(predictedValue)
 
-        def generateCubicPredictedValues(self):
+	def generateCubicPredictedValues(self):
 		"""
 		@summary: method to generate the predicted values in our cubic regression model
 		"""
@@ -179,30 +175,29 @@ class TrendReader(object):
 		"""
 		@summary: method to generate the predicted values of the nan points
 		"""
-        self.generateQuadraticPredictedValues()
+		self.generateQuadraticPredictedValues()
 		self.nanPredictedValues = {}
 		for nanXValue in self.nanIndices:
-            self.nanPredictedValues[nanXValue + 1] = self.predictedQuadraticValues[nanXValue]
+			self.nanPredictedValues[nanXValue + 1] = self.predictedQuadraticValues[nanXValue]
 
 	def printNanValues(self):
-		#
 		dataSet = "var nans = [\n"
-		for key, value in self.nanPredictedValues:
+		for key in self.nanPredictedValues.keys():
+			value = self.nanPredictedValues[key]
 			dataSet += "[{}, {}],\n".format(str(key), value)
 		# trim off the last comma
 		dataSet = dataSet[:-2]
 		dataSet += "\n];"
-		print(dataSet)
-		# with open("nansData.js", "w") as fh:
-		#fh.write(dataSet)
+		with open("nansData.js", "w") as fh:
+			fh.write(dataSet)
 
 	def getLinearPredictedValues(self):
 		return self.predictedLinearValues
 
 	def getQuadraticPredictedValues(self):
 		return self.predictedQuadraticValues
-
-    def getCubicPredictedValues(self):
+	
+	def getCubicPredictedValues(self):
 		return self.predictedCubicValues
 
 	def getAvgPredictedValues(self):
