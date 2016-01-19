@@ -24,14 +24,17 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 - [Dataset](http://www.cis.gvsu.edu/~wolffe/courses/cs678/projects/downloads.txt)
 
 ### Development
-#### Python
+#### Editors
 - [Style Guide](https://www.python.org/dev/peps/pep-0008/)
+- [Vim](http://vim.wikia.com/wiki/Converting_tabs_to_spaces)
+- [Sublime Text](https://www.sublimetext.com/docs/2/indentation.html)
+- [Atom Editor](https://atom.io/packages/tabs-to-spaces)
 
+#### Python
 - [Try Except, Continue For Loop](http://stackoverflow.com/questions/4799974/continue-on-except-of-a-try-block-in-python)
-
 - [Calculating Polynomial Regressions](http://hotmath.com/hotmath_help/topics/quadratic-regression.html)
-
 - [Numpy](http://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html#numpy.linalg.solve)
+
 #### JavaScript
 - [Window Onload](https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onload)
 - [Global Variable Across Files](http://stackoverflow.com/questions/3244361/can-i-access-variables-from-another-file)
