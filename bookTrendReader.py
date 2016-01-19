@@ -14,6 +14,10 @@ class TrendReader(object):
 		self.dataFile = dataFile
 		self.fileLines = []
 		self.nbrOfNans = 0
+
+		self.slope = 0
+		self.intercept = 0
+
 		self.nanIndices = []
 		self.linearCoefficients = {}
 		self.cubicCoefficients = {}
@@ -38,18 +42,76 @@ class TrendReader(object):
 					self.nanIndices.append(i)
 				self.fileLines.append(downloads)
 
+        def generateSimpleLinearRegression(self):
+                """
+                @summary: method to generate a linear regression from our data
+                """
+                sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = nbrOfNans = 0
+                for hour, downloads in enumerate(self.fileLines):
+ 		    if downloads == "nan":
+ 			nbrOfNans += 1
+ 			continue
+                    hour = hour + 1
+                    sumXvalues += hour
+ 		    sumYvalues += downloads
+ 		    sumXYpairs += (hour * downloads)
+ 		    sumXsquared += (hour * hour)
+ 		    sumYsquared += (downloads * downloads)
+ 		
+                print "sum x: " + str(sumXvalues)
+                print "sum y: " + str(sumYvalues)
+                print "sum x*y: " + str(sumXYpairs)
+                print "sum x*x: " + str(sumXsquared)
+                print "sum y*y: " + str(sumYsquared)
+
+                nbrOfValues = len(self.fileLines) - nbrOfNans
+                print "n: " + str(nbrOfValues)
+
+                cov1 = nbrOfValues * sumXYpairs
+                cov2 = sumXvalues * sumYvalues
+                var1 = nbrOfValues * sumXsquared
+                var2 = sumXvalues * sumXvalues
+
+                """
+                print cov1
+                print cov2
+
+                print cov1 - cov2
+
+                print var1
+                print var2
+
+                print var1 - var2
+                """
+                covxy = cov1 - cov2
+                varx = var1 - var2
+                
+                slope = (1.0 * covxy) / (1.0 * varx)
+                print slope
+
+                
+
+                # calculate the slope
+ 		slope2 = (1.0 * ((nbrOfValues * sumXYpairs) - (sumXvalues * sumYvalues))) / (1.0 * ((nbrOfValues * sumXsquared) - (sumXsquared)))
+ 		# calculate the y intercept
+ 		intercept2 = (1.0 * (sumYvalues - (slope * sumXvalues))) / (1.0 * nbrOfValues)
+ 		# assign to the instance
+ 		self.slope = slope
+ 		self.intercept = intercept
+ 		print("\ny = {}x + {}\n".format(slope, intercept))
+
 	def generatePolynomialRegression(self, degree, data):
 		"""
 		@param degree: the integer degree
 		@param data: a list of file lines where each line is a comma separated x y coord
 		@return: a list of coefficients
-		Method that returns the coefficients of the n degree polynomial 
+		Method that returns the coefficients of the n degree polynomial
 		"""
 		xSummations = [0] * degree * 2
 		xySummations = [0] * (degree + 1)
 		nbrOfNans = 0
 		for hour, downloads in enumerate(data):
-			if downloads == "nan": 
+			if downloads == "nan":
 				nbrOfNans += 1
 				continue
 			for exponent in range(1, len(xSummations) + 1): xSummations[exponent - 1] += pow(hour, exponent)
@@ -175,6 +237,11 @@ def main(argv):
 	reader = TrendReader(argv[1])
 	# read in our data
 	reader.readDataFile()
+
+	reader.generateSimpleLinearRegression()
+
+	'''
+
 	# create a linear regression from our data - prints out the equation
 	reader.generateLinearRegression()
 	# create a cubic regression from our data - prints out the equation
@@ -184,6 +251,8 @@ def main(argv):
 	# get the points for our nan coords
 	reader.generateNanPredictedValues()
 	# print(reader.nanPredictedValues)
+
+	'''
 
 
 def usage():
