@@ -12,21 +12,22 @@
     // width and height
     var w = 500;
     var h = 500;
-    var barHeight = 20;
 
+    // svg
     var svg = d3.select("body")
     .append("svg")
     .attr("width", w)
     .attr("height", h)
     .attr("class", "chart");
 
+    // scale
+    var y = d3.scale.linear()
+        .range([h, 0]);
+
+    // chart
     var chart = d3.select(".chart")
     .attr("width", w)
-    .attr("height", barHeight * dataset.length);
-
-    var x = d3.scale.linear()
-    .domain([0, d3.max(dataset)])
-    .range([0, w]);
+    .attr("height", h);
 
     var bar = chart.selectAll("g")
     .data(dataset)
