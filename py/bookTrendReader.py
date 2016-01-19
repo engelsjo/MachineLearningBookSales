@@ -14,18 +14,13 @@ class TrendReader(object):
 		self.dataFile = dataFile
 		self.fileLines = []
 		self.nbrOfNans = 0
-
 		self.slope = 0
 		self.intercept = 0
-
+		self.nanPredictedValues = {}
 		self.nanIndices = []
-		self.linearCoefficients = {}
-		self.cubicCoefficients = {}
 		self.predictedLinearValues = []
 		self.predictedQuadraticValues = []
 		self.predictedCubicValues = []
-		self.cubicAndLinearAvgValues = []
-		self.nanPredictedValues = {}
 
 	def readDataFile(self):
 		"""
@@ -44,6 +39,9 @@ class TrendReader(object):
 				self.fileLines.append(downloads)
 
 	def generateSimpleLinearRegression(self):
+		"""
+		@summary: prints out the linear regression using the formula given by Dr. Wolffe in project specs
+		"""
 		sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = nbrOfNans = 0
 		for hour, downloads in enumerate(self.fileLines):
 			if downloads == "nan":
@@ -173,7 +171,7 @@ class TrendReader(object):
 
 	def generateNanPredictedValues(self):
 		"""
-		@summary: method to generate the predicted values of the nan points
+		@summary: method to generate the predicted values of the nan points using our quadratic values
 		"""
 		self.generateQuadraticPredictedValues()
 		self.nanPredictedValues = {}
@@ -181,6 +179,10 @@ class TrendReader(object):
 			self.nanPredictedValues[nanXValue + 1] = self.predictedQuadraticValues[nanXValue]
 
 	def printNanValues(self):
+		"""
+		@summary: method to write out the nan predicted values to a javascript array in a 
+				  javascript file for use by our d3 view stuff.
+		"""
 		dataSet = "var nans = [\n"
 		for key in self.nanPredictedValues.keys():
 			value = self.nanPredictedValues[key]
@@ -188,7 +190,7 @@ class TrendReader(object):
 		# trim off the last comma
 		dataSet = dataSet[:-2]
 		dataSet += "\n];"
-		with open("nansData.js", "w") as fh:
+		with open("../js/nansData.js", "w") as fh:
 			fh.write(dataSet)
 
 	def getLinearPredictedValues(self):
@@ -199,9 +201,6 @@ class TrendReader(object):
 	
 	def getCubicPredictedValues(self):
 		return self.predictedCubicValues
-
-	def getAvgPredictedValues(self):
-		return self.cubicAndLinearAvgValues
 
 	def getNanPredictedValues(self):
 		return self.nanPredictedValues
@@ -225,17 +224,17 @@ def main(argv):
 	reader = TrendReader(argv[1])
 	# read in our data
 	reader.readDataFile()
-
+	# create a linear regression from our data - prints out the equation
 	reader.generateSimpleLinearRegression()
 	# create a linear regression from our data - prints out the equation
 	reader.generateLinearRegression()
-	# create a quad regresssion
+	# create a quad regresssion from our data - prints out the equation
 	reader.generateQuadraticRegression()
 	# create a cubic regression from our data - prints out the equation
 	reader.generateCubicRegression()
 	# get the points for our nan coords
 	reader.generateNanPredictedValues()
-	# format the nan values
+	# format the nan values and write them to javascript file for d3
 	reader.printNanValues()
 
 
