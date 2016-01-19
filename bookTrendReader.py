@@ -22,6 +22,7 @@ class TrendReader(object):
 		self.linearCoefficients = {}
 		self.cubicCoefficients = {}
 		self.predictedLinearValues = []
+		self.predictedQuadraticValues = []
 		self.predictedCubicValues = []
 		self.cubicAndLinearAvgValues = []
 		self.nanPredictedValues = {}
@@ -42,63 +43,41 @@ class TrendReader(object):
 					self.nanIndices.append(i)
 				self.fileLines.append(downloads)
 
-        def generateSimpleLinearRegression(self):
-                """
-                @summary: method to generate a linear regression from our data
-                """
-                sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = nbrOfNans = 0
-                for hour, downloads in enumerate(self.fileLines):
- 		    if downloads == "nan":
- 			nbrOfNans += 1
- 			continue
-                    hour = hour + 1
-                    sumXvalues += hour
- 		    sumYvalues += downloads
- 		    sumXYpairs += (hour * downloads)
- 		    sumXsquared += (hour * hour)
- 		    sumYsquared += (downloads * downloads)
- 		
-                print "sum x: " + str(sumXvalues)
-                print "sum y: " + str(sumYvalues)
-                print "sum x*y: " + str(sumXYpairs)
-                print "sum x*x: " + str(sumXsquared)
-                print "sum y*y: " + str(sumYsquared)
+    def generateSimpleLinearRegression(self):
+		"""
+		@summary: method to generate a linear regression from our data
+		"""
+		sumXvalues = sumYvalues = sumXYpairs = sumXsquared = sumYsquared = nbrOfNans = 0
+		for hour, downloads in enumerate(self.fileLines):
+			if downloads == "nan":
+				nbrOfNans += 1
+				continue
+			hour += 1
+			sumXvalues += hour
+			sumYvalues += downloads
+			sumXYpairs += (hour * downloads)
+			sumXsquared += (hour * hour)
+			sumYsquared += (downloads * downloads)
 
-                nbrOfValues = len(self.fileLines) - nbrOfNans
-                print "n: " + str(nbrOfValues)
+		nbrOfValues = len(self.fileLines) - nbrOfNans
 
-                cov1 = nbrOfValues * sumXYpairs
-                cov2 = sumXvalues * sumYvalues
-                var1 = nbrOfValues * sumXsquared
-                var2 = sumXvalues * sumXvalues
+		cov1 = nbrOfValues * sumXYpairs
+		cov2 = sumXvalues * sumYvalues
+		var1 = nbrOfValues * sumXsquared
+		var2 = sumXvalues * sumXvalues
 
-                """
-                print cov1
-                print cov2
+		covXY = cov1 - cov2
+		varX = var1 - var2
 
-                print cov1 - cov2
+		slope = float(covXY) / float(varX)
 
-                print var1
-                print var2
+		intercept = (float(sumYvalues) - (slope * float(sumXvalues))) / float(nbrOfValues)
 
-                print var1 - var2
-                """
-                covxy = cov1 - cov2
-                varx = var1 - var2
-                
-                slope = (1.0 * covxy) / (1.0 * varx)
-                print slope
-
-                
-
-                # calculate the slope
- 		slope2 = (1.0 * ((nbrOfValues * sumXYpairs) - (sumXvalues * sumYvalues))) / (1.0 * ((nbrOfValues * sumXsquared) - (sumXsquared)))
- 		# calculate the y intercept
- 		intercept2 = (1.0 * (sumYvalues - (slope * sumXvalues))) / (1.0 * nbrOfValues)
- 		# assign to the instance
- 		self.slope = slope
- 		self.intercept = intercept
- 		print("\ny = {}x + {}\n".format(slope, intercept))
+		# assign to the instance
+		self.slope = slope
+		self.intercept = intercept
+		print("Linear Regression calculated by hand: ")
+		print("\ny = {}x + {}\n".format(slope, intercept))
 
 	def generatePolynomialRegression(self, degree, data):
 		"""
@@ -144,7 +123,7 @@ class TrendReader(object):
 		"""
 		degree = 1
 		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
-		print("\nLinear Regression:\ny = {}x + {}\n".format(coefficients[0], coefficients[1]))
+		print("\nLinear Regression using Matrix Solver:\ny = {}x + {}\n".format(coefficients[0], coefficients[1]))
 
 	def generateQuadraticRegression(self):
 		"""
@@ -152,7 +131,7 @@ class TrendReader(object):
 		"""
 		degree = 2
 		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
-		print("\nQuadratic Regression:\ny = {}x^2 + {}x + {}\n".format(coefficients[0], coefficients[1], coefficients[2]))
+		print("\nQuadratic Regression using Matrix Solver:\ny = {}x^2 + {}x + {}\n".format(coefficients[0], coefficients[1], coefficients[2]))
 
 	def generateCubicRegression(self):
 		"""
@@ -160,7 +139,7 @@ class TrendReader(object):
 		"""
 		degree = 3
 		cubicCoefficients = self.generatePolynomialRegression(degree, self.fileLines)
-		print("\nCubic Regression:\ny = {}x^3 + {}x^2 + {}x + {}\n".format(cubicCoefficients[0], cubicCoefficients[1], cubicCoefficients[2], cubicCoefficients[3]))
+		print("\nCubic Regression using Matrix Solver:\ny = {}x^3 + {}x^2 + {}x + {}\n".format(cubicCoefficients[0], cubicCoefficients[1], cubicCoefficients[2], cubicCoefficients[3]))
 
 	def generateLinearPredictedValues(self):
 		"""
@@ -173,7 +152,19 @@ class TrendReader(object):
 			predictedValue = coefficients[0] * hourIndex + coefficients[1]
 			self.predictedLinearValues.append(predictedValue)
 
-	def generateCubicPredictedValues(self):
+	def generateQuadraticPredictedValues(self):
+		"""
+		@summary: method to generate the predicted values in our
+                quadratic regression
+		"""
+		self.predictedQuadraticValues = []
+		degree = 2
+		coefficients = self.generatePolynomialRegression(degree, self.fileLines)
+		for hourIndex in range(1, len(self.fileLines) + 1):
+		    predictedValue = coefficients[0] * pow(hourIndex, 2) + coefficients[1] * hourIndex + coefficients[2]
+            self.predictedQuadraticValues.append(predictedValue)
+
+        def generateCubicPredictedValues(self):
 		"""
 		@summary: method to generate the predicted values in our cubic regression model
 		"""
@@ -184,32 +175,34 @@ class TrendReader(object):
 			predictedValue = coefficients[0] * pow(hourIndex, 3) + coefficients[1] * pow(hourIndex, 2) + coefficients[2] * pow(hourIndex, 1) + coefficients[3]
 			self.predictedCubicValues.append(predictedValue)
 
-	def generateAvgPredictedValues(self):
-		"""
-		@summary: method to generate an average of the cubic and linear function
-		"""
-		self.cubicAndLinearAvgValues = []
-		self.generateLinearPredictedValues()
-		self.generateCubicPredictedValues()
-		for x in range(len(self.predictedLinearValues)):
-			linearVal = self.predictedLinearValues[x]
-			cubicVal = self.predictedCubicValues[x]
-			avgVal = (linearVal + cubicVal) / 2.0
-			self.cubicAndLinearAvgValues.append(avgVal)
-
 	def generateNanPredictedValues(self):
 		"""
 		@summary: method to generate the predicted values of the nan points
 		"""
+        self.generateQuadraticPredictedValues()
 		self.nanPredictedValues = {}
-		self.generateAvgPredictedValues()
 		for nanXValue in self.nanIndices:
-			self.nanPredictedValues[nanXValue + 1] = self.cubicAndLinearAvgValues[nanXValue]
+            self.nanPredictedValues[nanXValue + 1] = self.predictedQuadraticValues[nanXValue]
+
+	def printNanValues(self):
+		#
+		dataSet = "var nans = [\n"
+		for key, value in self.nanPredictedValues:
+			dataSet += "[{}, {}],\n".format(str(key), value)
+		# trim off the last comma
+		dataSet = dataSet[:-2]
+		dataSet += "\n];"
+		print(dataSet)
+		# with open("nansData.js", "w") as fh:
+		#fh.write(dataSet)
 
 	def getLinearPredictedValues(self):
 		return self.predictedLinearValues
 
-	def getCubicPredictedValues(self):
+	def getQuadraticPredictedValues(self):
+		return self.predictedQuadraticValues
+
+    def getCubicPredictedValues(self):
 		return self.predictedCubicValues
 
 	def getAvgPredictedValues(self):
@@ -239,20 +232,16 @@ def main(argv):
 	reader.readDataFile()
 
 	reader.generateSimpleLinearRegression()
-
-	'''
-
 	# create a linear regression from our data - prints out the equation
 	reader.generateLinearRegression()
-	# create a cubic regression from our data - prints out the equation
-	reader.generateCubicRegression()
 	# create a quad regresssion
 	reader.generateQuadraticRegression()
+	# create a cubic regression from our data - prints out the equation
+	reader.generateCubicRegression()
 	# get the points for our nan coords
 	reader.generateNanPredictedValues()
-	# print(reader.nanPredictedValues)
-
-	'''
+	# format the nan values
+	reader.printNanValues()
 
 
 def usage():
