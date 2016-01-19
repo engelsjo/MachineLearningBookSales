@@ -1,5 +1,10 @@
 # CIS 678 - Project 1
 
+
+
+- [Important Info] (http://stackoverflow.com/questions/13715900/d3-js-plotting-multiple-data-sets-from-separate-files)
+
+
 ## Authors
 Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 
