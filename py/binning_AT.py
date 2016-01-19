@@ -8,11 +8,15 @@ Binning into days, weeks, and time of day
 import sys
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
+
+#import plotly.plotly as py
 
 
 np.set_printoptions(threshold='nan')
 
-file = "downloads.txt"
+file = "../downloads.txt"
 
 fileLines = []
 
@@ -61,26 +65,14 @@ def printValues(name, array):
 	with open(name+"Data.js", "w") as fh:
 		fh.write(dataSet)
 
-def printValues2():
-	dataSet = "var dayOfWeek = [\n"
-        for i in range(len(dayOfWeek)):
-        	dataSet += "[{}, {}],\n".format(str(i+1), str(dayOfWeek[i]))
-	# trim off the last comma
-	dataSet = dataSet[:-2]
-	dataSet += "\n];"
-	with open("dayOfWeek.js", "w") as fh:
-		fh.write(dataSet)
+#printValues('timeOfDay',timeOfDay)
+#printValues('dayOfWeek',dayOfWeek)
+#printValues('dayOfMonth',dayOfMonth)
+#multiple_bars = plt.figure()
+ax = plt.subplot(111)
+ax.bar(range(1,25), list(timeOfDay.astype(int)),width=1.0,color='#000099',align='center')
+plt.xlabel("Time Of Day")
+plt.ylabel("Average Amount of Downloads")
+plt.show()
 
-def printValues3():
-	dataSet = "var dayOfMonth = [\n"
-        for i in range(len(dayOfMonth)):
-        	dataSet += "[{}, {}],\n".format(str(i+1), str(dayOfMonth[i]))
-	# trim off the last comma
-	dataSet = dataSet[:-2]
-	dataSet += "\n];"
-	with open("dayOfMonth.js", "w") as fh:
-		fh.write(dataSet)
 
-printValues('timeOfDay',timeOfDay)
-printValues('dayOfWeek',dayOfWeek)
-printValues('dayOfMonth',dayOfMonth)
