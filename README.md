@@ -45,3 +45,8 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 - [D3 Scatterplot Tutorial](https://www.oreilly.com/learning/making-a-scatterplot-with-d3-js)
 - [D3 Trend Line](http://bl.ocks.org/benvandyke/8459843)
 - [D3 CSV Import](https://github.com/mbostock/d3/wiki/CSV)
+
+##### Convert SVG to PNG in Browser
+- 1. View SVG image by opening HTML file in Chrome browser.
+- 2. Save SVG in HTML to SVG file by using [SVG Crowbar 2](http://nytimes.github.io/svg-crowbar/). 
+- 3. Convert local SVG file to PNG image using [this converter](http://techslides.com/demos/d3/convert-svg-png.html).
