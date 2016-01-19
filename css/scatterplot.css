@@ -24,6 +24,20 @@
 	stroke-width: 1;
 }
 
+.quad {
+	fill: none;
+	stroke: blue;
+	stroke-width: 1;
+}
+
+.datapoints {
+
+}
+
+.nans {
+
+}
+
 /*
 .trendLine {
 	stroke: red;
