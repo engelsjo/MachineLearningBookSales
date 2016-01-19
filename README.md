@@ -49,4 +49,4 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 ##### Convert SVG to PNG in Browser
 - 1. View SVG image by opening HTML file in Chrome browser.
 - 2. Save SVG in HTML to SVG file by using [SVG Crowbar 2](http://nytimes.github.io/svg-crowbar/). 
-- 3. Convert local SVG file to PNG image using [this converter](http://techslides.com/demos/d3/convert-svg-png.html).
+- 3. Convert local SVG file to PNG image using [Cloud Convert](https://cloudconvert.com/svg-to-jpg).
