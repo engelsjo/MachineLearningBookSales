@@ -1,0 +1,25 @@
+HEX CODES
+
+Yellow
+#E5CF6C
+#F9EBAA
+
+green
+#9EBE59
+#D3E5B5
+
+verde
+#5CBE95
+#B7E4D0
+
+blue
+#5884B5
+#B7CDE5
+
+red
+#CB6686
+#E5B5C5
+
+orange
+#E68670
+#F0C8C0
