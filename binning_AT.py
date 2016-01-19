@@ -31,9 +31,6 @@ with open(file) as fh:
 
 downloadArray = np.empty([len(fileLines),2]).astype(int)
 
-
-
-
 def binning(mod, mod2, mod3):
 	for hour, downloads in enumerate(fileLines):
 		downloadArray[hour] = int(hour % mod / mod2 % mod3), downloads
@@ -42,16 +39,29 @@ def binning(mod, mod2, mod3):
 	binCountArray = np.bincount(downloadArray[:,0])
 	binnedArray = np.bincount(downloadArray[:,0],weights=downloadArray[:,1])
 	
-	print binCountArray
-	print binnedArray
+	#print binCountArray
+	#print binnedArray
 	
 	return binnedArray / binCountArray
 
-print binning(24, 1, len(fileLines))
+#print binning(24, 1, len(fileLines))
+#print binning(len(fileLines), 24, len(fileLines))
+#print binning(len(fileLines), 24, 7)
 
-print binning(len(fileLines), 24, len(fileLines))
 
-print binning(len(fileLines), 24, 7)
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''
 
 class TrendReader(object):
