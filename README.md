@@ -20,6 +20,8 @@ Michael Baldwin, Joshua Engelsma, Adam Terwilliger
 
 ### Development
 #### Python
+- [Style Guide](https://www.python.org/dev/peps/pep-0008/)
+
 - [Try Except, Continue For Loop](http://stackoverflow.com/questions/4799974/continue-on-except-of-a-try-block-in-python)
 
 - [Calculating Polynomial Regressions](http://hotmath.com/hotmath_help/topics/quadratic-regression.html)
